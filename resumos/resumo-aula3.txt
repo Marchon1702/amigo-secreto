@@ -1,0 +1,89 @@
+Usando um mock costumizado com Jest
+
+No cenário onde precisamos criar um teste baseado no valor retornado por um hook, podemos mockar esse hook dentro do test.
+
+Ex: 
+    jest.mock('caminho-do-hook', () => {
+        return {
+            useListaParticipantes: jest.fn(), 
+        }
+    })
+
+    describe('Quando não existem participantes suficientes', () => {
+
+    beforeEach(() => {
+        (useListaParticipantes as jest.Mock).mockReturnValue([]);
+    })
+
+    test('O brincadeira não pode começar', () => {
+        render(
+            <RecoilRoot>
+                <Footer />
+            </RecoilRoot>
+        )
+
+        const botao = screen.getByRole('button')
+
+        expect(botao).toBeDisabled()
+    })
+})
+
+No cenário acima, utilizamos o hook que retorna um valor, esse hook se chama "useListaParticipantes". Antes de tudo fora dos describes e testes devemos informa ao jest.mock qual o caminho do hook e oque ele é, (jest.fn = uma função), para mockar um valor referenciado ou (fingindo ser) esse hook, utilizamos beforeEach, que diz oq será feito antes dos testes iniciarem e declaramos   (useListaParticipantes as jest.Mock).mockReturnValue([]); mockReturnValue(valor) significa que fingimos que o hook retornou o valor que no caso foi []. Após isso podemos continuar com os testes e usar esse valor mockado como referência.
+
+Usando um hook do React para mockar algo com o Jest.
+
+Ex: 
+const mockNavegacao = jest.fn()
+
+jest.mock("react-router-dom", () => {
+    return {
+        useNavigate: () => mockNavegacao,
+    }
+})
+
+
+Como useNavigate é chamado em um componente:
+
+const funcaoRetornada = useNavigate()
+
+Dizemos que mockNavegacao = jest.fn porque useNavigate é um hook que retorna uma função, quando isso ocorre, devemos usar "() =>" para dizer isso. Nesse caso o mockNavegacao é tratado como a função retornada pelo useNavigate.
+
+
+ test('A brincadeira foi iniciada', () => {
+        render(
+            <RecoilRoot>
+                <Footer />
+            </RecoilRoot>
+        )
+
+        const botao = screen.getByRole('button')
+        fireEvent.click(botao)
+
+        expect(mockNavegacao).toHaveBeenCalledTimes(1)
+        expect(mockNavegacao).toHaveBeenCalledWith('/sorteio')
+    })
+
+No test acima esperamos que mockNavegacao que é a função retornada por useNavigate, tenha sido chamada pelo menos uma vez e que tenha sido chamada com o argumento ('/sorteio').
+
+
+Realizando Testes de SnapShot
+
+Um teste de snapShot serve para nos certificarmos que a estrutura de um componente esta exatamente criada como está gravado no snapShot
+
+Ex: 
+
+describe('A pagina de configuração', () => {
+    test('Deve ser renderizada corretamente', () => {
+        const { container } = render(
+            <RecoilRoot>
+                <Configuracao />
+            </RecoilRoot>
+        )
+
+        expect(container).toMatchSnapshot()
+    })
+})
+
+Guardamos o render dentro de um valor do destructor chamado container, quando fazemos isso, assim que o test for iniciado um snapShot será gravado, e com a linha "expect(container).toMatchSnapshot()" dizemos que é esperado que o container seja igual ao snapShot gravado.
+
+Quando mudamos algo o teste falhará, mas caso queiramos guardar uma nova snapShot, basta apenas U para que o test grave uma snapShot do estado atual do container.

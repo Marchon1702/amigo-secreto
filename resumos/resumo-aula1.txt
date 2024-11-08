@@ -1,0 +1,58 @@
+Introdução a testes com Jest e React-testing-library
+
+Jest é uma biblioteca usada para criarmos testes na nossa aplicação, o Rtl é uma biblioteca nativa do React que é urilizada para capturarmos componentes na tela e usa-los nos testes.
+
+Para criar um "ambiente de testes" usando o Rtl, devemos criar um arquivo com a extensão ".test.tsx" 
+
+Neste arquivo podemos usar a função test do Jest para iniciarmos o "ambiente".
+
+Ex: 
+    test('Funcionalidade que será testada', () => {
+        render(<ComponenteTestado />)
+
+        // Encontrando o elemento DOM
+        const input = screen.getByPlaceholderText("Texto escrito no placeholder")
+
+        // Encontrando um elemento DOM por sua função no HTML
+        const botao = screen.getByRole("button")
+        // Acima é atribuido um elemento que faz a função de ser um button no HTML
+
+
+        // Verificando se input está no "ComponenteTestado"/Documento
+        expect(input).toBeInDocument()
+
+        // Verificando se botao está desabilitado
+        expect(botao).toBeDisable()
+    })
+
+Resumo de funções
+
+React-testing-library (Rtl)
+
+render = Serve para renderizar o componente para que posteriormente possamos interagir com os elementos dele.
+
+screen = Sinaliza para buscar na "tela"
+.getByPlaceholderText = Busca um elemento DOM pelo oque está escrito em seu placeholder
+.getByRole = Busca um elemento DOM pela sua função no documento 
+
+Métodos Jest
+
+test = Inicia o escopo dos testes
+
+expect = Espera determinada caracteristica
+.toBeInDocument = espera que o elemento esteja no documento
+.toBeDisable = esperar que um elemento esteja com o atribuido disable ativado
+
+Pirâmide de testes
+
+a Pirâmide de testes é localizada de baixo para cima:
+
+3 - interface = É o teste final feito na aplicação por completo e feito simulando que o sistema está sendo usado pelo usuário.
+2 - Serviço/ Integração = São testes feitos usando todas as porções em conjunto.
+1 - Unitário = São testes feitos por porções (componentes, Métodos e funções) isoladas.
+
+Quanto mais alto o nivel ta pirâmide, mais lento e caro ele é.
+
+
+
+

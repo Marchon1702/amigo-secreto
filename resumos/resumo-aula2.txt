@@ -1,0 +1,95 @@
+Como usar useRef
+
+useRef é uma biblioteca react usada para referenciar um elemento do componente a uma variavel.
+
+Ex: 
+    
+export default function Formulario() {
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    return (
+    <form onSubmit={adicionarParticipante}>
+      <input
+        ref={inputRef}
+        value={nome}
+        type="text"
+        placeholder="Insira os nomes dos participantes"
+        onChange={(event) => setNome(event.target.value)}
+      />
+      <button disabled={!nome}>Adicionar</button>
+      {mensagemErro && <p role="alert">{mensagemErro}</p>}
+    </form>
+  );
+}
+
+No exemplo acima ref é um atributo do input, e ele diz que inputRef é sua referência, todo useRef começa como null, por isso a declaração useRef<HTMLInputElement>(null), está dizendo que inputRef é um elemento html e é nulo como estado inicial.
+
+
+Conhecimentos aprodundados no fluxo de código usando Jest e react-testing-library.
+
+O desenvolvedor do teste vai declarando oque ele deseja que o usuário faca ao longo da sua interação, ou seja, em um teste onde é esperado que caso um valor seja duplicado, uma mensagem de erro deve existir segue todos os passos que o usuário e a aplicação fariam para que o resultado final fosse o esperado.
+
+Ex: 
+
+test("Caso o nome seja duplicado, uma mensagem de erro deve ser inserida.", () => {
+
+    // Declarando que o componente Formulario que será testado e usaremos os States dele estão encapsulados no RecoilRoot.
+
+    render(
+      <RecoilRoot>
+        <Formulario />          
+      </RecoilRoot>
+    );
+
+    No Script abaixo o desenvolvedor descreve passo a passo oque acontecerá até o resultado final que será uma mensagem de erro.
+
+    const input = screen.getByPlaceholderText(
+      "Insira os nomes dos participantes"
+    ); // O script da aplicação deve encontrar um elemento dentro de Formulario que possua o placeholder = "Insira os nomes dos participantes"
+
+    const botao = screen.getByRole("button");
+    // O script da aplicação deve encontrar um elemento dentro do Formulario que tenha o role = "button"
+
+    fireEvent.change(input, {
+      target: {
+        value: "Ana Catarina",
+      },
+    }); // O usuário deve inserir um valor no input
+
+    fireEvent.click(botao); // O usuário deve clicar no botão e submeter o Formulario.
+
+    fireEvent.change(input, {
+      target: {
+        value: "Ana Catarina",
+      },
+    }); // O usuário deve inserir o mesmo valor no input.
+
+    fireEvent.click(botao); // O usuário deve clicar no botão e submeter o Formulario.
+
+    const mensagemDeErro = screen.getByRole("alert"); // O script da aplicação deverá encontrar um elemento com o role = 'alert'
+
+    expect(mensagemDeErro.textContent).toBe("Esse nome já existe na lista"); // O script de teste espera que tenha uma mensagemDeErro com um texto contendo "Esse nome já existe na lista";
+  });
+
+  Diferença entre getByRole e queryByRole
+
+  get = espera que o elemento exista, caso contrário gera um erro.
+
+  query = entende que o elemento pode existir ou não, caso não exista não é retornado nenhum erro.
+
+  Usando FakeTimers
+
+  Quando queremos testar que algo deve acontecer depois de um determinado tempo, como por exemplo através de uma função setTimeOut, usamos o Jest e criamos FakeTimers, ele criar um tempo fake que não está relacionado com o tempo real implementado no javaScript, isso serve para que o script de test não tenha q esperar o tempo real de execuçÃo do código otimizando a resposta do test.
+
+  Quando for a hora de simular a execução de um FakeTimer, chamamos a função jest.runAllTimers.
+
+  Ela executa todos os temporizadores do script, sinalizando que esse determinado tempo tenha passado e logo após podemos inserir a lógica do que deve acontecer depois q o tempo passou.
+
+  jest.runAllTimers deve ser usado dentro de act(), isso garante que todos os states sejam atualizados antes do script teste passar para a próxima linha.
+
+Ex: 
+act(() => {
+    jest.runAllTimers
+})
+

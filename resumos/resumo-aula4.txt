@@ -1,0 +1,18 @@
+Testando funções puras
+
+Para testar uma função pura com jest podemos escrever a logica da função e declarar oque esperamos que aconteça, lembrando sempre de mockar um resultado para que sua lógica tenha referência de valor.
+
+Usando a estrutura de dados Map
+
+Diferente do método map, essa estrutura não é usada em arrays e sim para setarmos valores que são referentes um ao outro, um par de valores, essa estrutura retorna um [] array com arrays de pares de valores dentro ou seja
+
+Ex: 
+    const pares = new Map([
+        ['água', 'sede'],
+        ['fogo', 'calor'],
+        ['gelo', 'frio']
+    ])
+
+Para setar um par dentro de um Map, podemos usar "pares.set('valor1', 'valor2')", também podemos utilizar o método get para pegar o valor de um par "pares.get(valor1)" isso retornará o 'valor2'.
+
+Adendo: Sempre que uma variavel do seu componente depender de um valor que é retornado através de um hook, você deve mockar esse hook no jest e retornar um valor seguindo o modelo do que você espera no código real.
